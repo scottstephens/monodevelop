@@ -489,7 +489,7 @@ namespace Microsoft.Samples.Debugging.CorDebug
             }
             finally
             {
-                if(e.Continue)
+                if(e.Continue  && callbackType != ManagedCallbackType.OnProcessExit)
                 {
 #if MDBG_FEATURE_INTEROP
                     // this is special case for interop debugging
