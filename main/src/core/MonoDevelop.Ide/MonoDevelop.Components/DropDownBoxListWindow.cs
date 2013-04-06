@@ -171,8 +171,24 @@ namespace MonoDevelop.Components
 		
 		protected override bool OnButtonPressEvent (Gdk.EventButton evnt)
 		{
-			Destroy ();
+			if (left)
+				Destroy ();
 			return base.OnButtonPressEvent (evnt);
+		}
+
+
+		bool left = true;
+		protected override bool OnLeaveNotifyEvent (Gdk.EventCrossing evnt)
+		{
+			left = true;
+			return base.OnLeaveNotifyEvent (evnt);
+		}
+
+		protected override bool OnEnterNotifyEvent (Gdk.EventCrossing evnt)
+		{
+			if (evnt.Window == this.GdkWindow)
+				left = false;
+			return base.OnEnterNotifyEvent (evnt);
 		}
 
 		protected override bool OnKeyPressEvent (Gdk.EventKey evnt)

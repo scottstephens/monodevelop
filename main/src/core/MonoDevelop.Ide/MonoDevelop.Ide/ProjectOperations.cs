@@ -1343,13 +1343,7 @@ namespace MonoDevelop.Ide
 				if (folder.IsRoot) {
 					// Don't allow adding files to the root folder. VS doesn't allow it
 					// If there is no existing folder, create one
-					var itemsFolder = (SolutionFolder) folder.Items.Where (item => item.Name == "Solution Items").FirstOrDefault ();
-					if (itemsFolder == null) {
-						itemsFolder = new SolutionFolder ();
-						itemsFolder.Name = "Solution Items";
-						folder.AddItem (itemsFolder);
-					}
-					folder = itemsFolder;
+					folder = folder.ParentSolution.DefaultSolutionFolder;
 				}
 				
 				if (!fp.IsChildPathOf (folder.BaseDirectory)) {
@@ -1759,6 +1753,12 @@ namespace MonoDevelop.Ide
 				// Remove all files and directories under 'sourcePath'
 				foreach (var v in filesToRemove)
 					sourceProject.Files.Remove (v);
+
+				// Moving an empty folder. A new folder object has to be added to the project.
+				if (movingFolder && !sourceProject.Files.GetFilesInVirtualPath (targetPath).Any ()) {
+					var folderFile = new ProjectFile (targetPath) { Subtype = Subtype.Directory };
+					sourceProject.Files.Add (folderFile);
+				}
 			}
 			
 			var pfolder = sourcePath.ParentDirectory;
